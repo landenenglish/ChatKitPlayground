@@ -41,9 +41,6 @@ export default defineEventHandler(async (event) => {
           id: workflowId,
         },
         user: userId,
-        file_upload: {
-          enabled: true,
-        },
       }),
     })
 

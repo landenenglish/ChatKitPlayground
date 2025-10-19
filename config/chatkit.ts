@@ -38,9 +38,7 @@ export const chatkitConfig: Omit<ChatKitOptions, 'api'> = {
   },
   composer: {
     attachments: {
-      enabled: true,
-      maxCount: 5,
-      maxSize: 104857600, // 100MB
+      enabled: false, // Requires full ChatKitServer with AttachmentStore implementation
     },
   },
   startScreen: {
