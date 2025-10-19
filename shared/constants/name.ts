@@ -1,1 +1,1 @@
-export const APP_NAME = 'AI BMR POC'
+export const APP_NAME = 'AI BMR'

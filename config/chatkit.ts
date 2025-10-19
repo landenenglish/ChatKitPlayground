@@ -42,12 +42,12 @@ export const chatkitConfig: Omit<ChatKitOptions, 'api'> = {
     },
   },
   startScreen: {
-    greeting: 'Calculate your Basal Metabolic Rate (BMR)',
+    greeting: 'Basal Metabolic Rate Agent by Landen English',
     prompts: [
       {
         label: 'Get started',
-        prompt: "Let's get started!",
-        icon: 'sparkle',
+        prompt: "Let's get started",
+        icon: 'play',
       },
     ],
   },
