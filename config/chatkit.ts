@@ -45,12 +45,12 @@ export const chatkitConfig: Omit<ChatKitOptions, 'api'> = {
   },
   startScreen: {
     greeting: 'What can I help with today?',
-    prompts: [],
-  },
-  widgets: {
-    onAction: async (action: any, widgetItem: any) => {
-      console.log('Widget action triggered:', action, widgetItem)
-      // Handle widget actions here if needed
-    },
+    prompts: [
+      {
+        label: 'Get started',
+        prompt: "Let's get started!",
+        icon: 'sparkle',
+      },
+    ],
   },
 }
