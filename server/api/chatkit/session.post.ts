@@ -3,7 +3,12 @@ export default defineEventHandler(async (event) => {
   const apiKey = config.openaiApiKey
   const workflowId = config.public.workflowId
 
+  console.log('Session endpoint called')
+  console.log('API Key exists:', !!apiKey)
+  console.log('Workflow ID:', workflowId)
+
   if (!apiKey) {
+    console.error('Missing OPENAI_API_KEY')
     throw createError({
       statusCode: 500,
       message: 'OPENAI_API_KEY not configured',
@@ -11,6 +16,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!workflowId) {
+    console.error('Missing NUXT_PUBLIC_WORKFLOW_ID')
     throw createError({
       statusCode: 500,
       message: 'NUXT_PUBLIC_WORKFLOW_ID not configured',
@@ -37,14 +43,16 @@ export default defineEventHandler(async (event) => {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('OpenAI API error:', response.status, errorText)
+      console.error('OpenAI API error:', response.status, response.statusText)
+      console.error('OpenAI error details:', errorText)
       throw createError({
         statusCode: response.status,
-        message: `OpenAI API error: ${response.statusText}`,
+        message: `OpenAI API error: ${response.statusText} - ${errorText}`,
       })
     }
 
     const data = await response.json()
+    console.log('Session created successfully')
 
     return {
       client_secret: data.client_secret,
