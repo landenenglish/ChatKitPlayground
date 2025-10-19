@@ -45,8 +45,7 @@ export default defineNuxtConfig({
       meta: [
         {
           name: 'viewport',
-          content:
-            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+          content: 'width=device-width, initial-scale=1.0',
         },
       ],
       script: [
@@ -57,7 +56,7 @@ export default defineNuxtConfig({
         },
         {
           src: 'https://cdn.platform.openai.com/deployments/chatkit/chatkit.js',
-          async: true,
+          type: 'module',
         },
       ],
       style: [
@@ -91,11 +90,6 @@ export default defineNuxtConfig({
           rel: 'preconnect',
           href: 'https://cdn.openai.com',
         },
-        // Preload critical ChatKit script
-        {
-          rel: 'modulepreload',
-          href: 'https://cdn.platform.openai.com/deployments/chatkit/chatkit.js',
-        },
         // Preload critical fonts
         {
           rel: 'preload',
@@ -115,44 +109,9 @@ export default defineNuxtConfig({
     },
   },
 
+  ssr: false,
+
   plugins: [{ src: '~/plugins/apply-theme.client.ts', mode: 'client' }],
 
   compatibilityDate: '2025-03-29',
-
-  imports: {
-    dirs: ['shared/constants'],
-  },
-
-  vite: {
-    server: {
-      allowedHosts: ['.trycloudflare.com'],
-    },
-    build: {
-      cssCodeSplit: true,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            chatkit: ['chatkit-vue'],
-          },
-        },
-      },
-    },
-  },
-
-  // Enable experimental features for better performance
-  experimental: {
-    payloadExtraction: false,
-    renderJsonPayloads: true,
-  },
-
-  // Optimize build
-  build: {
-    transpile: ['chatkit-vue'],
-  },
-
-  // Enable route rules for better performance
-  routeRules: {
-    '/': { prerender: false, ssr: true },
-    '/api/**': { cors: true },
-  },
 })

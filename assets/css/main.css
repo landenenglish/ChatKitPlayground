@@ -74,6 +74,26 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
   }
+
+  /* Safari needs explicit styles for custom elements and their containers */
+  openai-chatkit {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100vh !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Force all parent containers to render */
+  .h-full {
+    height: 100% !important;
+    min-height: 100vh !important;
+  }
+
+  .w-full {
+    width: 100% !important;
+  }
 }
 
 @layer tailwind-utilities {

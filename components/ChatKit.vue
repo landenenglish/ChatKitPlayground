@@ -1,85 +1,33 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import { ChatKit, useChatKit, createHostedClientSecret } from 'chatkit-vue'
+import { chatkitConfig } from '~/config/chatkit'
 
 const isLoading = ref(true)
 
-// Use OpenAI hosted backend with session endpoint
 const hosted = createHostedClientSecret({
   url: '/api/chatkit/session',
   method: 'POST',
 })
 
-// Hide loader when ChatKit is ready
-onMounted(async () => {
-  await nextTick()
-
-  // Wait for ChatKit to be fully rendered and initialized
-  setTimeout(() => {
-    const checkChatKitReady = () => {
-      const chatKitElement = document.querySelector('openai-chatkit')
-      if (chatKitElement) {
-        // Give a small delay to ensure smooth transition
-        setTimeout(() => {
-          isLoading.value = false
-        }, 100)
-      } else {
-        requestAnimationFrame(checkChatKitReady)
-      }
-    }
-
-    checkChatKitReady()
-  }, 500)
-})
-
 const { control } = useChatKit({
   api: hosted,
-  theme: {
-    colorScheme: 'dark' as const,
-    radius: 'pill' as const,
-    density: 'normal' as const,
-    typography: {
-      baseSize: 16,
-      fontFamily:
-        '"OpenAI Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
-      fontFamilyMono:
-        'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "DejaVu Sans Mono", "Courier New", monospace',
-      fontSources: [
-        {
-          family: 'OpenAI Sans',
-          src: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2',
-          weight: 400,
-          style: 'normal',
-          display: 'swap',
-        },
-        {
-          family: 'OpenAI Sans',
-          src: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Medium.woff2',
-          weight: 500,
-          style: 'normal',
-          display: 'swap',
-        },
-        {
-          family: 'OpenAI Sans',
-          src: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Bold.woff2',
-          weight: 700,
-          style: 'normal',
-          display: 'swap',
-        },
-      ],
-    },
-  },
-  composer: {
-    attachments: {
-      enabled: true,
-      maxCount: 5,
-      maxSize: 10485760,
-    },
-  },
-  startScreen: {
-    greeting: '',
-    prompts: [],
-  },
+  ...chatkitConfig,
+})
+
+onMounted(async () => {
+  await nextTick()
+  setTimeout(() => {
+    const checkReady = () => {
+      const el = document.querySelector('openai-chatkit')
+      if (el) {
+        setTimeout(() => (isLoading.value = false), 100)
+      } else {
+        requestAnimationFrame(checkReady)
+      }
+    }
+    checkReady()
+  }, 500)
 })
 </script>
 
@@ -89,13 +37,11 @@ const { control } = useChatKit({
       <ChatKit :control="control" class="h-full w-full" />
     </ClientOnly>
 
-    <!-- Loading overlay -->
     <div
       v-if="isLoading"
       class="absolute inset-0 z-50 flex items-center justify-center bg-black"
     >
       <div class="relative h-16 w-16">
-        <!-- Outer ring -->
         <div
           class="absolute inset-0 rounded-full border-2 border-transparent"
           style="
@@ -104,7 +50,6 @@ const { control } = useChatKit({
             animation: spin 1.5s linear infinite;
           "
         ></div>
-        <!-- Middle ring -->
         <div
           class="absolute rounded-full border-2 border-transparent"
           style="
@@ -117,7 +62,6 @@ const { control } = useChatKit({
             animation: spin 1s linear infinite reverse;
           "
         ></div>
-        <!-- Inner ring -->
         <div
           class="absolute rounded-full border-2 border-transparent"
           style="
@@ -130,7 +74,6 @@ const { control } = useChatKit({
             animation: spin 0.75s linear infinite;
           "
         ></div>
-        <!-- Center dot -->
         <div class="absolute inset-0 flex items-center justify-center">
           <div
             class="h-2 w-2 rounded-full bg-white"
