@@ -18,22 +18,10 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // Generate a simple user ID
+    // Generate a unique user ID for session tracking
     const userId = `user_${Date.now()}`
 
-    // Make direct API call to OpenAI's ChatKit sessions endpoint (same as Next.js)
-    const requestBody = {
-      workflow: {
-        id: workflowId,
-      },
-      user: userId,
-    }
-
-    console.log(
-      'Creating ChatKit session with:',
-      JSON.stringify(requestBody, null, 2)
-    )
-
+    // Create ChatKit session via OpenAI API
     const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
       method: 'POST',
       headers: {
@@ -41,19 +29,17 @@ export default defineEventHandler(async (event) => {
         'OpenAI-Beta': 'chatkit_beta=v1',
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        workflow: {
+          id: workflowId,
+        },
+        user: userId,
+      }),
     })
 
     if (!response.ok) {
       const errorText = await response.text()
       console.error('OpenAI API error:', response.status, errorText)
-      let errorDetails
-      try {
-        errorDetails = JSON.parse(errorText)
-      } catch {
-        errorDetails = errorText
-      }
-      console.error('OpenAI API error details:', errorDetails)
       throw createError({
         statusCode: response.status,
         message: `OpenAI API error: ${response.statusText}`,
@@ -61,12 +47,6 @@ export default defineEventHandler(async (event) => {
     }
 
     const data = await response.json()
-    console.log('ChatKit session response:', JSON.stringify(data, null, 2))
-    console.log('ChatKit session created successfully:', {
-      userId,
-      workflowId,
-      hasClientSecret: !!data.client_secret,
-    })
 
     return {
       client_secret: data.client_secret,

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ChatKit, useChatKit, createHostedClientSecret } from 'chatkit-vue'
 
-// Use hosted client secret with custom backend
+// Use OpenAI hosted backend with domain allowlist
 const hosted = createHostedClientSecret({
-  url: '/api/chatkit/custom-session',
+  url: '/api/chatkit/session',
   method: 'POST',
 })
 
