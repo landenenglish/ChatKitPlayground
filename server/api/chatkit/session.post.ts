@@ -17,8 +17,14 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Set cache headers for faster subsequent loads
-  setHeader(event, 'Cache-Control', 'private, max-age=0, must-revalidate')
+  // Prevent caching of session tokens
+  setHeader(
+    event,
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate'
+  )
+  setHeader(event, 'Pragma', 'no-cache')
+  setHeader(event, 'Expires', '0')
 
   try {
     const userId = `user_${Date.now()}`
@@ -35,6 +41,9 @@ export default defineEventHandler(async (event) => {
           id: workflowId,
         },
         user: userId,
+        file_upload: {
+          enabled: true,
+        },
       }),
     })
 

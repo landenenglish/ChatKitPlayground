@@ -40,7 +40,7 @@ export const chatkitConfig: Omit<ChatKitOptions, 'api'> = {
     attachments: {
       enabled: true,
       maxCount: 5,
-      maxSize: 10485760,
+      maxSize: 104857600, // 100MB
     },
   },
   startScreen: {
