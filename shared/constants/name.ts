@@ -1,1 +1,1 @@
-export const APP_NAME = 'Core'
+export const APP_NAME = 'Landen Chat Kit Playground'

@@ -3,12 +3,7 @@ export default defineEventHandler(async (event) => {
   const apiKey = config.openaiApiKey
   const workflowId = config.public.workflowId
 
-  console.log('Session endpoint called')
-  console.log('API Key exists:', !!apiKey)
-  console.log('Workflow ID:', workflowId)
-
   if (!apiKey) {
-    console.error('Missing OPENAI_API_KEY')
     throw createError({
       statusCode: 500,
       message: 'OPENAI_API_KEY not configured',
@@ -16,12 +11,14 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!workflowId) {
-    console.error('Missing NUXT_PUBLIC_WORKFLOW_ID')
     throw createError({
       statusCode: 500,
       message: 'NUXT_PUBLIC_WORKFLOW_ID not configured',
     })
   }
+
+  // Set cache headers for faster subsequent loads
+  setHeader(event, 'Cache-Control', 'private, max-age=0, must-revalidate')
 
   try {
     const userId = `user_${Date.now()}`
@@ -43,8 +40,6 @@ export default defineEventHandler(async (event) => {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('OpenAI API error:', response.status, response.statusText)
-      console.error('OpenAI error details:', errorText)
       throw createError({
         statusCode: response.status,
         message: `OpenAI API error: ${response.statusText} - ${errorText}`,
@@ -52,13 +47,11 @@ export default defineEventHandler(async (event) => {
     }
 
     const data = await response.json()
-    console.log('Session created successfully')
 
     return {
       client_secret: data.client_secret,
     }
   } catch (error: any) {
-    console.error('Failed to create ChatKit session:', error)
     throw createError({
       statusCode: error.statusCode || 500,
       message: error.message || 'Failed to create ChatKit session',

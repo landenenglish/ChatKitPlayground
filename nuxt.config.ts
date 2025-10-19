@@ -42,6 +42,13 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: APP_NAME,
+      meta: [
+        {
+          name: 'viewport',
+          content:
+            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+        },
+      ],
       script: [
         {
           innerHTML: `(${preventFlash.toString()})();`,
@@ -50,7 +57,7 @@ export default defineNuxtConfig({
         },
         {
           src: 'https://cdn.platform.openai.com/deployments/chatkit/chatkit.js',
-          defer: true,
+          async: true,
         },
       ],
       style: [
@@ -71,6 +78,39 @@ export default defineNuxtConfig({
           href: '/favicon.ico',
           type: 'image/x-icon',
         },
+        // Preconnect to OpenAI services for faster loading
+        {
+          rel: 'preconnect',
+          href: 'https://cdn.platform.openai.com',
+        },
+        {
+          rel: 'preconnect',
+          href: 'https://api.openai.com',
+        },
+        {
+          rel: 'preconnect',
+          href: 'https://cdn.openai.com',
+        },
+        // Preload critical ChatKit script
+        {
+          rel: 'modulepreload',
+          href: 'https://cdn.platform.openai.com/deployments/chatkit/chatkit.js',
+        },
+        // Preload critical fonts
+        {
+          rel: 'preload',
+          href: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Regular.woff2',
+          as: 'font',
+          type: 'font/woff2',
+          crossorigin: 'anonymous',
+        },
+        {
+          rel: 'preload',
+          href: 'https://cdn.openai.com/common/fonts/openai-sans/v2/OpenAISans-Medium.woff2',
+          as: 'font',
+          type: 'font/woff2',
+          crossorigin: 'anonymous',
+        },
       ],
     },
   },
@@ -87,5 +127,32 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: ['.trycloudflare.com'],
     },
+    build: {
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            chatkit: ['chatkit-vue'],
+          },
+        },
+      },
+    },
+  },
+
+  // Enable experimental features for better performance
+  experimental: {
+    payloadExtraction: false,
+    renderJsonPayloads: true,
+  },
+
+  // Optimize build
+  build: {
+    transpile: ['chatkit-vue'],
+  },
+
+  // Enable route rules for better performance
+  routeRules: {
+    '/': { prerender: false, ssr: true },
+    '/api/**': { cors: true },
   },
 })

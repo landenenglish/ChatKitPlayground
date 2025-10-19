@@ -3,14 +3,76 @@
 @layer tailwind-base {
   @tailwind base;
 
+  /* Optimize font rendering */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Keyframe animations */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* GPU acceleration for animations */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    will-change: opacity;
+    transform: translateZ(0);
+  }
+
   html,
   body,
   #__nuxt {
     margin: 0;
     padding: 0;
-    height: 100%;
+    /* Use dvh for dynamic viewport height that accounts for mobile browser UI */
+    height: 100dvh;
     width: 100%;
     overflow: hidden;
+    /* Support for older browsers */
+    height: -webkit-fill-available;
+  }
+
+  /* Prevent iOS Safari from bouncing */
+  body {
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100dvh;
+  }
+
+  /* Support for iPhone notch and safe areas */
+  @supports (padding: max(0px)) {
+    body {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 }
 

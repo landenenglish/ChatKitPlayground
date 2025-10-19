@@ -1,8 +1,7 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div class="h-screen w-screen overflow-hidden">
+  <div class="h-full w-full overflow-hidden">
     <ChatKit />
   </div>
 </template>
