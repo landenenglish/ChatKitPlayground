@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ChatKit, useChatKit, createHostedClientSecret } from 'chatkit-vue'
+import { ChatKit, useChatKit } from 'chatkit-vue'
 
-// Use OpenAI hosted backend with domain allowlist
-const hosted = createHostedClientSecret({
-  url: '/api/chatkit/session',
-  method: 'POST',
-})
+const config = useRuntimeConfig()
 
+// Use public-key approach (simpler, frontend-only)
 const { control } = useChatKit({
-  api: hosted,
+  api: {
+    domainKey: config.public.domainKey,
+    workflowId: config.public.workflowId,
+  },
   theme: {
     colorScheme: 'dark' as const,
     radius: 'pill' as const,

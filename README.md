@@ -7,7 +7,7 @@ A production-ready integration of OpenAI ChatKit with Nuxt 3, using the OpenAI h
 - 🚀 **OpenAI Hosted Backend** - Leverages OpenAI's Agent Builder for workflow management
 - 🎨 **Custom Theming** - Dark mode UI with OpenAI Sans typography
 - 📱 **Responsive Design** - Full-screen chat experience optimized for all devices
-- 🔒 **Secure Authentication** - Session-based authentication with client secrets
+- 🔒 **Domain-Based Authentication** - Simple public-key authentication (no backend required)
 - 📎 **File Attachments** - Support for up to 5 file attachments per message (10MB max)
 
 ## Prerequisites
@@ -35,9 +35,11 @@ cp .env.example .env
 Then edit `.env` and add your values:
 
 ```env
-OPENAI_API_KEY=sk-proj-your-key-here
 NUXT_PUBLIC_WORKFLOW_ID=wf_your-workflow-id-here
+NUXT_PUBLIC_DOMAIN_KEY=domain_pk_your-public-key-here
 ```
+
+**Note:** This implementation uses the public-key approach, so no OpenAI API key is needed!
 
 **Getting your Workflow ID:**
 
@@ -46,7 +48,7 @@ NUXT_PUBLIC_WORKFLOW_ID=wf_your-workflow-id-here
 3. Click "Publish"
 4. Copy the workflow ID (starts with `wf_`)
 
-### 3. Add Domain to Allowlist
+### 3. Add Domain to Allowlist and Get Public Key
 
 ⚠️ **CRITICAL STEP** - ChatKit requires your domain to be allowlisted:
 
@@ -54,8 +56,10 @@ NUXT_PUBLIC_WORKFLOW_ID=wf_your-workflow-id-here
 2. Click "Add Domain"
 3. For **development**: Add `localhost:3000` or your dev domain
 4. For **production**: Add your production domain (e.g., `yourdomain.com`)
+5. **Copy the public key** that OpenAI provides (starts with `domain_pk_`)
+6. Add the public key to your `.env` file as `NUXT_PUBLIC_DOMAIN_KEY`
 
-**Note:** Don't include `http://` or `https://` - just the domain and port.
+**Note:** Don't include `http://` or `https://` in the domain - just the domain and port.
 
 ### 4. Run Development Server
 
@@ -65,6 +69,8 @@ npm run dev
 
 Visit `http://localhost:3000` and you should see the ChatKit interface.
 
+**Important:** If testing locally, you'll need to use a tunneling service (like Cloudflare Tunnel or ngrok) to get a public URL that matches your allowlisted domain.
+
 ## Deployment
 
 ### Production Checklist
@@ -72,10 +78,10 @@ Visit `http://localhost:3000` and you should see the ChatKit interface.
 Before deploying to production:
 
 - [ ] Add production domain to OpenAI allowlist
-- [ ] Set `OPENAI_API_KEY` in your hosting provider's environment variables
+- [ ] Copy the public key from OpenAI
 - [ ] Set `NUXT_PUBLIC_WORKFLOW_ID` in your hosting provider's environment variables
+- [ ] Set `NUXT_PUBLIC_DOMAIN_KEY` in your hosting provider's environment variables
 - [ ] Test the workflow in Agent Builder preview mode
-- [ ] Verify API key has production access
 
 ### Build for Production
 
@@ -89,11 +95,7 @@ npm run preview
 ```
 core/
 ├── components/
-│   └── ChatKit.vue          # Main ChatKit component
-├── server/
-│   └── api/
-│       └── chatkit/
-│           └── session.post.ts  # Session creation endpoint
+│   └── ChatKit.vue          # Main ChatKit component (with public key)
 ├── pages/
 │   └── index.vue            # Main page with full-screen chat
 ├── layouts/
@@ -117,13 +119,13 @@ The ChatKit component (`components/ChatKit.vue`) can be customized with:
 
 See the [ChatKit documentation](https://github.com/openai/chatkit-js) for all available options.
 
-### Session Management
+### Authentication
 
-Sessions are created server-side in `server/api/chatkit/session.post.ts` using:
+This implementation uses **public-key authentication**:
 
-- OpenAI API key for authentication
-- Workflow ID from Agent Builder
-- Unique user ID per session
+- Domain key configured via environment variable (`NUXT_PUBLIC_DOMAIN_KEY`)
+- No backend authentication required
+- Validated by OpenAI based on your allowlisted domain
 
 ## Troubleshooting
 
@@ -144,10 +146,10 @@ Sessions are created server-side in `server/api/chatkit/session.post.ts` using:
 
 **Solution:**
 
-1. Verify `OPENAI_API_KEY` is correct and from the same org/project
-2. Check that workflow is published in Agent Builder
+1. Verify your domain is in the OpenAI allowlist
+2. Check that `NUXT_PUBLIC_DOMAIN_KEY` matches the public key from OpenAI
 3. Ensure `NUXT_PUBLIC_WORKFLOW_ID` matches exactly
-4. Confirm API key hasn't expired
+4. Confirm workflow is published in Agent Builder
 
 ### Messages Don't Send
 

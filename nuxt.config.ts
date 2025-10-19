@@ -13,9 +13,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    openaiApiKey: '', // Will be populated from NUXT_OPENAI_API_KEY env var
     public: {
       workflowId: '', // Will be populated from NUXT_PUBLIC_WORKFLOW_ID env var
+      domainKey: '', // Will be populated from NUXT_PUBLIC_DOMAIN_KEY env var
     },
   },
 
