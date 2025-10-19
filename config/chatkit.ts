@@ -44,24 +44,8 @@ export const chatkitConfig: Omit<ChatKitOptions, 'api'> = {
     },
   },
   startScreen: {
-    greeting: 'Calculate your Basal Metabolic Rate (BMR)',
-    prompts: [
-      {
-        label: 'Calculate my BMR',
-        prompt: 'I want to calculate my BMR',
-        icon: 'analytics',
-      },
-      {
-        label: 'What is BMR?',
-        prompt: 'What is Basal Metabolic Rate and why is it important?',
-        icon: 'lightbulb',
-      },
-      {
-        label: 'Get started',
-        prompt: 'Help me calculate my daily caloric needs',
-        icon: 'sparkle',
-      },
-    ],
+    greeting: 'What can I help with today?',
+    prompts: [],
   },
   widgets: {
     onAction: async (action: any, widgetItem: any) => {
