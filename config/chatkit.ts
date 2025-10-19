@@ -44,7 +44,7 @@ export const chatkitConfig: Omit<ChatKitOptions, 'api'> = {
     },
   },
   startScreen: {
-    greeting: 'What can I help with today?',
+    greeting: 'Calculate your Basal Metabolic Rate (BMR)',
     prompts: [
       {
         label: 'Get started',
